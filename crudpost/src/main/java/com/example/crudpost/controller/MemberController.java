@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -22,9 +23,9 @@ public class MemberController {
         return memberService.getAllMembers();
     }
 
-    @DeleteMapping("/deletes/{memberId}")
-    public void deleteMember(@PathVariable String memberId) {
-        memberService.deleteMember(memberId);
+    @DeleteMapping("/deletes/{uuid}")
+    public void deleteMember(@PathVariable UUID uuid) {
+        memberService.deleteMember(uuid);
     }
     @PostMapping("/updates")
     public void updateMember(@RequestBody Member member) {

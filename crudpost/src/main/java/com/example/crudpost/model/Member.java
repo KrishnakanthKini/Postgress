@@ -3,7 +3,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.actuate.endpoint.web.Link;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.GeneratedValue;
@@ -25,6 +24,14 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Member   {
 
+  public UUID getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(UUID uuid) {
+    this.uuid = uuid;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
 //  @Column(name = "uuid")
@@ -34,6 +41,7 @@ public class Member   {
                 String suffix, String dob, String gender, String ssn, Boolean horizonEmployeeIndicator) {
     super();
 
+//    this.uuid= uuid;
     this.memberId = memberId;
     this.personId = personId;
     this.prefix = prefix;
@@ -46,6 +54,8 @@ public class Member   {
     this.ssn = ssn;
     this.horizonEmployeeIndicator = horizonEmployeeIndicator;
   }
+
+
 
   @JsonProperty("memberId")
   private String memberId = null;
@@ -360,7 +370,9 @@ public class Member   {
       return false;
     }
     Member member = (Member) o;
-    return Objects.equals(this.memberId, member.memberId) &&
+    return
+//    Objects.equals(this.uuid, member.uuid) &&
+            Objects.equals(this.memberId, member.memberId) &&
             Objects.equals(this.personId, member.personId) &&
             Objects.equals(this.prefix, member.prefix) &&
             Objects.equals(this.firstName, member.firstName) &&
@@ -376,14 +388,14 @@ public class Member   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(memberId, personId, prefix, firstName, middleName, lastName, suffix, dob, gender, ssn, horizonEmployeeIndicator, links);
+    return Objects.hash(uuid,memberId, personId, prefix, firstName, middleName, lastName, suffix, dob, gender, ssn, horizonEmployeeIndicator, links);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Member {\n");
-
+//    sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
     sb.append("    memberId: ").append(toIndentedString(memberId)).append("\n");
     sb.append("    personId: ").append(toIndentedString(personId)).append("\n");
     sb.append("    prefix: ").append(toIndentedString(prefix)).append("\n");

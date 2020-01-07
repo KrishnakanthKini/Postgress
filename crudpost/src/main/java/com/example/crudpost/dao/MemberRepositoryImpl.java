@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Transactional
 @Repository
@@ -27,16 +28,16 @@ public class MemberRepositoryImpl implements  MemberRepository {
     @Override
     public void addMember(Member member) {
 
-        String query = "INSERT INTO member( memberId, personId,  prefix,  firstName,  middleName,  lastName, suffix,  dob, gender,  ssn, horizonEmployeeIndicator) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)";
-        jdbcTemplate.update(query,member.getMemberId(),member.getPersonId(),member.getPrefix(),member.getFirstName(),member.getMiddleName(),member.getLastName(),member.getSuffix(),member.getDob(),member.getGender(),member.getSsn(),true);
+        String query = "INSERT INTO member( uuid,memberId, personId,  prefix,  firstName,  middleName,  lastName, suffix,  dob, gender,  ssn, horizonEmployeeIndicator) VALUES(?,?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)";
+        jdbcTemplate.update(query,member.getUuid(),member.getMemberId(),member.getPersonId(),member.getPrefix(),member.getFirstName(),member.getMiddleName(),member.getLastName(),member.getSuffix(),member.getDob(),member.getGender(),member.getSsn(),true);
 
     }
 
     @Override
-    public void deleteMember(String memberId) {
+    public void deleteMember(UUID uuid) {
 
-        String query = "DELETE FROM member WHERE memberId=?";
-        jdbcTemplate.update(query, memberId);
+        String query = "DELETE FROM member WHERE uuid=?";
+        jdbcTemplate.update(query, uuid);
     }
 
     @Override

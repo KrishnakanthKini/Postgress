@@ -2,6 +2,7 @@ package com.example.crudpost.service;
 import com.example.crudpost.model.Member;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface MemService {
 
@@ -11,6 +12,6 @@ public interface MemService {
 
     public void updateMember(Member member);
 
-    public void deleteMember(String memberId);
+    public void deleteMember(UUID uuid);
 
 }

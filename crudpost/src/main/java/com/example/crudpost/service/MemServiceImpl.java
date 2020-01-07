@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class MemServiceImpl implements MemService {
@@ -29,7 +30,7 @@ public class MemServiceImpl implements MemService {
     }
 
     @Override
-    public void deleteMember(String memberId) {
-        memberRepository.deleteMember(memberId);
+    public void deleteMember(UUID uuid) {
+        memberRepository.deleteMember(uuid);
     }
 }
