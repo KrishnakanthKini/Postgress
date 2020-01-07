@@ -1,0 +1,857 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "**Description:**  Horizon members\n\n\n| Version | Date | Change |\n| -------- | -------- | -------- |\n| 1.0     | 03/17/2017     | Original Version  Approved Version    |\n| 1.1.1     | 04/24/2017     | Updated Header X-HZN-UserToken, X-HZN-RequestingSubscriberToken, X-HZN-RequestingMemberToken and X-HZN-RootId   |\n|      |      | Added Prefix and Suffix    |\n|      |      | Added Employee Indicator    |\n|      |      | Made memberToken Required     |\n| 1.1.2   | 06/05/2017     | Removed X-HZN-RequestingSubscriberToken and  status 408   |\n| 1.1.3   | 06/06/2017     | Removed status 401   |\n| 1.1     | 06/07/2017     | Approved version   |\n| 1.2.1     | 07/17/2017     | Updated memberToken references to memberId, memberId to personId,  and Date to DateTime |\n|1.2.2   | 07/24/2017     | Corrected spelling of the word parameter. Updated personId definition. Updated link to remove member.|\n| 1.3.1   | 08/03/2017     | Update to remove \"internal\" resources |\n|    |    | Removed X-HZN-ClientTimeout |\n| 1.3.2   | 08/08/2017     | Updated  X-HZN-RequestingMemberId description|\n| 1.3   | 10/15/2017     | Approved |\n| 1.4.1  | 11/17/2017     | Updated /members/search/ for wildcard search |\n| 1.4   | 12/12/2017     | Approved |\n| 1.5.1  | 03/06/2018     | Updated /members/search to allow search by ssn only. Indicated that it must not be passed as blank or all zeroes|\n| 1.5.2  | 04/09/2018     | Updated /members/search for elastic search|\n| 1.5.3  | 04/17/2018     | Incorporated Sirisha's feedback moving pageNumber, pageSize to query parameter. Added totalNoOfRecords. |\n| 1.5.4  | 04/19/2018     | Incorporated ADGQ feedback.|\n| 1.5.5  | 05/02/2018     | Incorporated Sirisha's feedback.|\n| 1.5  | 05/07/2018     |  Approved |\n| 1.6.1  | 06/06/2018     | Updated /members/serch with planCode and planName |\n| 1.6.2  | 06/11/2018     | Renamed  planCode and planName  to homePlanCode and homePlanName as per ADGQ feedback |\n| 1.6  | 06/19/2018     |  Approved |\n| 1.7.1  | 07/19/2018     |  Updated description of member name in POST|\n| 1.7  |  07/31/2018    |  Approved |\n | 1.8.1  |  09/12/2018    |  Updated adding sort parameter to POST for paging|\n  | 1.8.2  |  09/20/2018    |  Updated sort description per ADGQ feedback|\n| 1.8    |  09/26/2018    |  Approved |\n| 1.9.1  |  10/03/2018    |  Updated adding disabilityStatus, disabilityEffectiveDate & disabilityEndDate elements |\n | 1.9    |  10/09/2018    |  Approved |\n | 1.10.1   |  02/01/2019    |  Separated into V1 (non elastic) and V2 (elastic)|\n | 1.10.2   |  02/08/2019    |  Incorporated ADGQ feedback|\n | 1.10.3  |  02/20/2019    |  Removed pagination, federalExchangeIndicators, plans from v1 responses |\n  | 1.10.4  |  03/04/2019    |  Updated responseMembers removing disabilityStatus, disabilityEffectiveDate, and disabilityEndDate |\n| 1.10 | 03/05/2019 | Approved |\n| 1.11.1 | 06/05/2019 | Added medicareBeneficiaryIdentifierto  v2/members/search request and medicareBeneficiaryIdentifier / medicareNumber to response |\n",
+    "version" : "1.11.1",
+    "title" : "members",
+    "termsOfService" : "",
+    "contact" : { }
+  },
+  "host" : "api.horizonblue.com",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/v1/members/{memberId}" : {
+      "get" : {
+        "tags" : [ "Member" ],
+        "summary" : "member",
+        "description" : " * **Purpose**: To retrieve a member (single member returned)\n* **Prerequisite**: memberId, typically obtained from /members/search\n* **Validation**: Valid member Id\n* **Design Pattern**: Synchronous\n* **Output**: member \n* **Error Notification**: Various http errors and faults. \n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "X-HZN-ClientName",
+          "in" : "header",
+          "required" : true,
+          "type" : "string",
+          "description" : "Name of the client"
+        }, {
+          "name" : "X-HZN-ClientSubmitDateTime",
+          "in" : "header",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Date/Time from the client in ISO 8601 date format yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        }, {
+          "name" : "X-HZN-ClientTransactionId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Unique client transaction Id"
+        }, {
+          "name" : "X-HZN-ClientSessionId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Client session id"
+        }, {
+          "name" : "X-HZN-UserId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Logged in user id - needed for additional tracking."
+        }, {
+          "name" : "X-HZN-UserRole",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "User role -  Role of the user. \nExamples: Subscriber, Member, Member Liaison, Provider, Provider Liaison, Internal User"
+        }, {
+          "name" : "X-HZN-RequestingMemberId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "**for internal use only** \nCurrent logged in memberId. \nFor a B2C process, this value will be set based upon the value in the JWT\nFor a B2B process, this value must either be set by the calling client or from the JWT. Note, if the JWT value is populated, it will override the value passed in by the client."
+        }, {
+          "name" : "X-HZN-RootId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "**for internal use only** An internal identifier for the end to end correlation of the API and its related services."
+        }, {
+          "name" : "X-HZN-Internal",
+          "in" : "header",
+          "required" : false,
+          "type" : "boolean",
+          "description" : "**for internal use only** True if the client has been authorized for internal properties.  Otherwise, the properties marked for **internal only** will not be returned."
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a single member",
+            "schema" : {
+              "$ref" : "#/definitions/member"
+            }
+          },
+          "404" : {
+            "description" : "Invalid Input Parameter – Not Authorized for this data",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "422" : {
+            "description" : "Unprocessable Entity - Used for validation errors.",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "500" : {
+            "description" : "General internal processing error(s).",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "504" : {
+            "description" : "API did not receive a response in the stipulated time frame from the backend systems",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          }
+        }
+      },
+      "parameters" : [ {
+        "name" : "memberId",
+        "in" : "path",
+        "required" : true,
+        "type" : "string",
+        "description" : "Unique Member identifier Note: This is a transient value"
+      } ]
+    },
+    "/v1/members/search" : {
+      "post" : {
+        "tags" : [ "Members" ],
+        "summary" : "members",
+        "description" : " * **Purpose**: To retrieve a collection of members based upon the search input\n* **Prerequisite**: none\n* **Validation**: Minimum search parameters are sent in ssn or personId or firstName and  lastName (together) are the minimum search parameters\n* **Design Pattern**: Synchronous\n* **Output**: collection of members (often just a single member) \n* **Error Notification**: Various http errors and faults. \nIf no records match the search input, a http 200 will be returned with an empty members collection.\n\n\n",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "pageNumber",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "description" : "page number to be returned",
+          "default" : 1,
+          "minimum" : 1,
+          "x-example" : "eg. if pageNumber=3 and pageSize=5, then records 11 to 15 will be returned"
+        }, {
+          "name" : "pageLimit",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "description" : "page limit - the number of members per page to be returned",
+          "default" : 100,
+          "minimum" : 1,
+          "maximum" : 100
+        }, {
+          "name" : "X-HZN-ClientName",
+          "in" : "header",
+          "required" : true,
+          "type" : "string",
+          "description" : "Name of the client"
+        }, {
+          "name" : "X-HZN-ClientSubmitDateTime",
+          "in" : "header",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Date/Time from the client in ISO 8601 date format yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\n\"Z\" - Zulu time"
+        }, {
+          "name" : "X-HZN-ClientTransactionId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Unique client transaction Id"
+        }, {
+          "name" : "X-HZN-ClientSessionId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Client session id"
+        }, {
+          "name" : "X-HZN-UserId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Logged in user id - needed for additional tracking."
+        }, {
+          "name" : "X-HZN-UserRole",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "User role -  Role of the user. \nExamples: Subscriber, Member, Member Liaison, Provider, Provider Liaison, Internal User"
+        }, {
+          "name" : "X-HZN-RequestingMemberId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "**for internal use only** \nCurrent logged in memberId. \nFor a B2C process, this value will be set based upon the value in the JWT\nFor a B2B process, this value must either be set by the calling client or from the JWT. Note, if the JWT value is populated, it will override the value passed in by the client."
+        }, {
+          "name" : "X-HZN-RootId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "**for internal use only** An internal identifier for the end to end correlation of the API and its related services."
+        }, {
+          "name" : "X-HZN-Internal",
+          "in" : "header",
+          "required" : false,
+          "type" : "boolean",
+          "description" : "**for internal use only** True if the client has been authorized for internal properties.  Otherwise, the properties marked for **internal only** will not be returned."
+        }, {
+          "name" : "body",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/memberSearchInput"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a list of member",
+            "schema" : {
+              "$ref" : "#/definitions/responseMembers"
+            }
+          },
+          "404" : {
+            "description" : "Invalid Input Parameter – Not Authorized for this data"
+          },
+          "422" : {
+            "description" : "Unprocessable Entity - Used for validation errors.",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "500" : {
+            "description" : "General internal processing error(s).",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "504" : {
+            "description" : "API did not receive a response in the stipulated time frame from the backend systems",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          }
+        }
+      }
+    },
+    "/v2/members/search" : {
+      "post" : {
+        "tags" : [ "Members" ],
+        "summary" : "members",
+        "description" : " * **Purpose**: To retrieve a collection of members based upon the search input\n* **Prerequisite**: none\n* **Validation**: Minimum search parameters are sent in ssn or personId or medicareBeneficiaryIdentifier  or firstName and  lastName (together) are the minimum search parameters\n* **Design Pattern**: Synchronous\n* **Output**: collection of members (often just a single member) \n* **Error Notification**: Various http errors and faults. \nIf no records match the search input, a http 200 will be returned with an empty members collection.\n\n\n",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "pageNumber",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "description" : "page number to be returned",
+          "default" : 1,
+          "minimum" : 1,
+          "x-example" : "eg. if pageNumber=3 and pageSize=5, then records 11 to 15 will be returned"
+        }, {
+          "name" : "pageLimit",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "description" : "page limit - the number of members per page to be returned",
+          "default" : 100,
+          "minimum" : 1,
+          "maximum" : 100
+        }, {
+          "name" : "X-HZN-ClientName",
+          "in" : "header",
+          "required" : true,
+          "type" : "string",
+          "description" : "Name of the client"
+        }, {
+          "name" : "X-HZN-ClientSubmitDateTime",
+          "in" : "header",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Date/Time from the client in ISO 8601 date format yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\n\"Z\" - Zulu time"
+        }, {
+          "name" : "X-HZN-ClientTransactionId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Unique client transaction Id"
+        }, {
+          "name" : "X-HZN-ClientSessionId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Client session id"
+        }, {
+          "name" : "X-HZN-UserId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "Logged in user id - needed for additional tracking."
+        }, {
+          "name" : "X-HZN-UserRole",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "User role -  Role of the user. \nExamples: Subscriber, Member, Member Liaison, Provider, Provider Liaison, Internal User"
+        }, {
+          "name" : "X-HZN-RequestingMemberId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "**for internal use only** \nCurrent logged in memberId. \nFor a B2C process, this value will be set based upon the value in the JWT\nFor a B2B process, this value must either be set by the calling client or from the JWT. Note, if the JWT value is populated, it will override the value passed in by the client."
+        }, {
+          "name" : "X-HZN-RootId",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "description" : "**for internal use only** An internal identifier for the end to end correlation of the API and its related services."
+        }, {
+          "name" : "X-HZN-Internal",
+          "in" : "header",
+          "required" : false,
+          "type" : "boolean",
+          "description" : "**for internal use only** True if the client has been authorized for internal properties.  Otherwise, the properties marked for **internal only** will not be returned."
+        }, {
+          "name" : "body",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/memberSearchInputElastic"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns a list of member",
+            "schema" : {
+              "$ref" : "#/definitions/responseMembersElastic"
+            }
+          },
+          "404" : {
+            "description" : "Invalid Input Parameter – Not Authorized for this data"
+          },
+          "422" : {
+            "description" : "Unprocessable Entity - Used for validation errors.",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "500" : {
+            "description" : "General internal processing error(s).",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          },
+          "504" : {
+            "description" : "API did not receive a response in the stipulated time frame from the backend systems",
+            "schema" : {
+              "$ref" : "#/definitions/responseFailure"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "memberSearchInput" : {
+      "type" : "object",
+      "properties" : {
+        "personId" : {
+          "type" : "string",
+          "description" : "Member's unique identifier.   MDM Original GUID generated by MDM .Its unique at an individual level .\n\n\nConditional search of personId or firstName, lastName and dob are the minimum search parameters"
+        },
+        "firstName" : {
+          "type" : "string",
+          "description" : "Member’s first name - Exact match or wildcard search.\n\nConditional search of personId or firstName, lastName and dob are the minimum search parameters. For wildcard search client will pass name with wildcard '%’. Wildcard search only happen when client pass wildcard end of string. Wildcard search must have at least a 1 character limit before the ‘%’ for a wild card search.",
+          "minLength" : 1
+        },
+        "middleName" : {
+          "type" : "string",
+          "description" : "Member's middle name. \nThis will be a wildcard search so that a single letter can be sent in to match a middle inital or full middle name."
+        },
+        "lastName" : {
+          "type" : "string",
+          "description" : "Member’s last name - Exact match or wildcard search.\n\nConditional search of personId or firstName, lastName and dob are the minimum search parameters.\n\nFor wildcard search client will pass name with wildcard '%’. Wildcard search only happen when client pass wildcard end of string. Wildcard search must have at least a 1 character limit before the ‘%’ for a wild card search.",
+          "minLength" : 1
+        },
+        "dob" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Member's Date of Birth - exact match.\n \n**Format ISO 8601 date in the format yyyy-MM-dd**\n\nConditional search of memberId or firstName, lastName and dob are the minimum search parameters"
+        },
+        "ssn" : {
+          "type" : "string",
+          "description" : "Member's ssn.   Format nnnnnnnnn. When passed must not be blank or  have any of the below combinations:\n\n*\t000000000\n*\t111111111\n*\t123456789\n*\t222222222\n*\t333333333\n*\t444444444\n*\t555555555\n*\t666666666\n*\t777777777\n*\t888888888\n*\t999999999\n*\t987654321"
+        },
+        "gender" : {
+          "type" : "string",
+          "description" : "Member's gender. \n\nValues:\n* Female\n* Male\n* Ambiguous\n* Not Applicable\n* Other\n* Unknown"
+        }
+      },
+      "description" : "Input for a member search.\n* Conditional search of ssn or personId or firstName and lastName (together) are the minimum search parameters. \n* When subGroupNumber is passed mainGroupNumber is required."
+    },
+    "memberSearchInputElastic" : {
+      "type" : "object",
+      "properties" : {
+        "personId" : {
+          "type" : "string",
+          "description" : "Member's unique identifier.   MDM Original GUID generated by MDM .Its unique at an individual level .\n\n\nConditional search of personId or firstName, lastName and dob are the minimum search parameters"
+        },
+        "firstName" : {
+          "type" : "string",
+          "description" : "For wildcard search client will pass name with wildcard '%'.  Wildcard search must have at least a 1 character limit before the ‘%’ for a wild card search. Wildcard  character can be at any position in the string following the first character. A wildcard character of '?' can be passed to match to a single character.\n\nNote: The members  firstName and lastName information is indexed at both the MDM  (golden record) and source grain levels.  This is used for optimized name matching. Whenever a match is found  it is the golden record that will be be returned.\n\nFor example, if search comes in with firstName Edmundo and for a given member golden record has ‘Ed’ and NMS record has ‘Edmund’ and NASCO record has ‘Edmundo’ will match on NASCO record. The golden record having Ed will be returned",
+          "minLength" : 1,
+          "example" : "* firstName= Jo% will match John, Joe, Jonathan, Jona\n* firstName= Jo%n% will match John and Johnathan but not Jona, Joe, Jona\n* firstName=Jon? will match Jona only"
+        },
+        "middleName" : {
+          "type" : "string",
+          "description" : "Member's middle name. \nThis will be a wildcard search so that a single letter can be sent in to match a middle inital or full middle name."
+        },
+        "lastName" : {
+          "type" : "string",
+          "description" : "For wildcard search client will pass name with wildcard '%'.  Wildcard search must have at least a 1 character limit before the ‘%’ for a wild card search. Wildcard  character can be at any position in the string following the first character. A wildcard character of '?' can be passed to match to a single character.",
+          "minLength" : 1,
+          "example" : "* lastName= Do% will match Doe, Donaldson\n* lastName= Do%s will match Donaldson, but not Doe\n* lastName=D?e will match Doe only"
+        },
+        "dob" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Member's Date of Birth - exact match.\n \n**Format ISO 8601 date in the format yyyy-MM-dd**\n\nConditional search of memberId or firstName, lastName and dob are the minimum search parameters"
+        },
+        "ssn" : {
+          "type" : "string",
+          "description" : "Member's ssn.   Format nnnnnnnnn. When passed must not be blank or  have any of the below combinations:\n\n*\t000000000\n*\t111111111\n*\t123456789\n*\t222222222\n*\t333333333\n*\t444444444\n*\t555555555\n*\t666666666\n*\t777777777\n*\t888888888\n*\t999999999\n*\t987654321"
+        },
+        "medicareBeneficiaryIdentifier" : {
+          "type" : "string",
+          "description" : "Medicare Beneficiary Identifier (MBI) This replaces the medicareNumber"
+        },
+        "gender" : {
+          "type" : "string",
+          "description" : "Member's gender. \n\nValues:\n* Female\n* Male\n* Ambiguous\n* Not Applicable\n* Other\n* Unknown"
+        },
+        "mainGroupNumber" : {
+          "type" : "string",
+          "description" : "7 digit group Number",
+          "minLength" : 7,
+          "maxLength" : 7,
+          "example" : "0085195"
+        },
+        "subGroupNumber" : {
+          "type" : "string",
+          "description" : "4 digit subGroup Number",
+          "minLength" : 4,
+          "maxLength" : 4,
+          "example" : "0033"
+        },
+        "address" : {
+          "$ref" : "#/definitions/address"
+        },
+        "plan" : {
+          "$ref" : "#/definitions/plan"
+        },
+        "sort" : {
+          "type" : "string",
+          "description" : "Sort order for result set of paged response\n\n* Format  ‘-’ for descending and a ‘+’  (or blank)(default) for ascending  as the sort order followed by the element name.   \n\n* The result set is sorted in its entirety  in the order the comma delimited elements are received before returning a given page. \n\n* If no sort parameter is passed, the result set will **not** be sorted.\n\n* Current  supported elements include firstName, lastName, dob. If an element name passed is other than firstName, lastName, dob  then a 422 validation error is returned.\n\n* Any  embedded space(s)  present within the search condition before or after ‘+’ or ‘-‘ or ‘,’ will be ignored and will not impact the sorting.",
+          "example" : "+firstName, +lastName, +dob \n\n(order by firstName, lastName, dob all in ascending order)"
+        }
+      },
+      "description" : "Input for a member search.\n* Conditional search of ssn or personId or medicareBeneficiaryIdentifier or firstName and lastName (together) are the minimum search parameters. \n* When subGroupNumber is passed mainGroupNumber is required."
+    },
+    "responseMembers" : {
+      "type" : "object",
+      "properties" : {
+        "members" : {
+          "type" : "array",
+          "description" : "A list of members",
+          "items" : {
+            "$ref" : "#/definitions/member"
+          }
+        },
+        "links" : {
+          "type" : "array",
+          "description" : "A list of links",
+          "items" : {
+            "$ref" : "#/definitions/link"
+          }
+        }
+      },
+      "description" : "A response structure for a member search.  "
+    },
+    "responseMembersElastic" : {
+      "type" : "object",
+      "properties" : {
+        "pagination" : {
+          "$ref" : "#/definitions/pagination"
+        },
+        "members" : {
+          "type" : "array",
+          "description" : "A list of members",
+          "items" : {
+            "$ref" : "#/definitions/memberElastic"
+          }
+        },
+        "links" : {
+          "type" : "array",
+          "description" : "A list of links",
+          "items" : {
+            "$ref" : "#/definitions/link"
+          }
+        }
+      },
+      "description" : "A response structure for a member search.  "
+    },
+    "member" : {
+      "type" : "object",
+      "required" : [ "dob", "firstName", "gender", "lastName", "memberId", "personId" ],
+      "properties" : {
+        "memberId" : {
+          "type" : "string",
+          "description" : "Member Id. Unique Member identifier. Note: This is a transient value\n  This is needed to call other APIs"
+        },
+        "personId" : {
+          "type" : "string",
+          "description" : "**Internal Only:** MDM Original GUID generated by MDM .Its unique at an individual level ."
+        },
+        "prefix" : {
+          "type" : "string",
+          "description" : "Member name prefix"
+        },
+        "firstName" : {
+          "type" : "string",
+          "description" : "Member's first name"
+        },
+        "middleName" : {
+          "type" : "string",
+          "description" : "Member's middle name"
+        },
+        "lastName" : {
+          "type" : "string",
+          "description" : "Member's last name"
+        },
+        "suffix" : {
+          "type" : "string",
+          "description" : "Member name suffix"
+        },
+        "dob" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Member's Date of Birth. Format  ISO 8601 date in the format yyyy-MM-dd"
+        },
+        "gender" : {
+          "type" : "string",
+          "description" : "Member's gender. \n\nValues:\n* Female\n* Male\n* Ambiguous\n* Not Applicable\n* Other\n* Unknown\n\nNote: The API will handle Gender filtration for Male and Female only"
+        },
+        "ssn" : {
+          "type" : "string",
+          "description" : "**Internal Only:** Member's SSN.   Format nnnnnnnnn."
+        },
+        "horizonEmployeeIndicator" : {
+          "type" : "boolean",
+          "description" : "Indicates if Member is a Horizon employee. Will only be returned when True."
+        },
+        "links" : {
+          "type" : "array",
+          "description" : "Collection of links",
+          "items" : {
+            "$ref" : "#/definitions/link"
+          }
+        }
+      },
+      "description" : "A single member record"
+    },
+    "memberElastic" : {
+      "type" : "object",
+      "required" : [ "dob", "firstName", "gender", "lastName", "memberId", "personId" ],
+      "properties" : {
+        "memberId" : {
+          "type" : "string",
+          "description" : "Member Id. Unique Member identifier. Note: This is a transient value\n  This is needed to call other APIs"
+        },
+        "personId" : {
+          "type" : "string",
+          "description" : "**Internal Only:** MDM Original GUID generated by MDM .Its unique at an individual level ."
+        },
+        "prefix" : {
+          "type" : "string",
+          "description" : "Member name prefix"
+        },
+        "firstName" : {
+          "type" : "string",
+          "description" : "Member's first name"
+        },
+        "middleName" : {
+          "type" : "string",
+          "description" : "Member's middle name"
+        },
+        "lastName" : {
+          "type" : "string",
+          "description" : "Member's last name"
+        },
+        "suffix" : {
+          "type" : "string",
+          "description" : "Member name suffix"
+        },
+        "dob" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Member's Date of Birth. Format  ISO 8601 date in the format yyyy-MM-dd"
+        },
+        "gender" : {
+          "type" : "string",
+          "description" : "Member's gender. \n\nValues:\n* Female\n* Male\n* Ambiguous\n* Not Applicable\n* Other\n* Unknown\n\nNote: The API will handle Gender filtration for Male and Female only"
+        },
+        "ssn" : {
+          "type" : "string",
+          "description" : "**Internal Only:** Member's SSN.   Format nnnnnnnnn."
+        },
+        "medicareBeneficiaryIdentifier" : {
+          "type" : "string",
+          "description" : "**Internal Only:** Medicare Beneficiary Identifier (MBI) This replaces the medicareNumber"
+        },
+        "medicareNumber" : {
+          "type" : "string",
+          "description" : "**Internal Only:** Medicare Number. This is legacy Medicare Number comprised of member's SSN and an alphabetic character."
+        },
+        "horizonEmployeeIndicator" : {
+          "type" : "boolean",
+          "description" : "Indicates if Member is a Horizon employee. Will only be returned when True."
+        },
+        "federalExchangeIndicators" : {
+          "$ref" : "#/definitions/federalExchangeIndicators"
+        },
+        "disabilityStatus" : {
+          "type" : "string",
+          "description" : "Member's disability status description\n\nExample:\n\nPermanently Handicapped\n\nTemporarily Handicapped"
+        },
+        "disabilityEffectiveDate" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Member's disability effective date. Format  ISO 8601 date in the format yyyy-MM-dd"
+        },
+        "disabilityEndDate" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "Member's disability end date. Format  ISO 8601 date in the format yyyy-MM-dd"
+        },
+        "links" : {
+          "type" : "array",
+          "description" : "Collection of links",
+          "items" : {
+            "$ref" : "#/definitions/link"
+          }
+        },
+        "plans" : {
+          "type" : "array",
+          "description" : "Member's home plan information",
+          "items" : {
+            "$ref" : "#/definitions/plan"
+          }
+        }
+      },
+      "description" : "A single member record"
+    },
+    "federalExchangeIndicators" : {
+      "type" : "object",
+      "required" : [ "alaskanNative", "americanIndian" ],
+      "properties" : {
+        "americanIndian" : {
+          "type" : "boolean",
+          "description" : "Indicator if the member is an American Indian.  Required for different exchange plans."
+        },
+        "alaskanNative" : {
+          "type" : "boolean",
+          "description" : "Indicator if the member is an Alaskan Native.  Required for different exchange plans."
+        }
+      }
+    },
+    "link" : {
+      "type" : "object",
+      "required" : [ "href", "rel" ],
+      "properties" : {
+        "rel" : {
+          "type" : "string",
+          "description" : "Relationship of the link.\nCurrent links include:\n* self: when requesting a single memberId\n* coverages: link to the member's coverages"
+        },
+        "href" : {
+          "type" : "string",
+          "description" : "The hyperlink reference to a resource.\nExamples:\n\"https://api.horizonblue.com/v1/members/M3\"\n\"https://api.horizonblue.com/v1/members/M3/coverages\""
+        }
+      },
+      "description" : "A single link structure"
+    },
+    "responseFailure" : {
+      "type" : "object",
+      "required" : [ "fault" ],
+      "properties" : {
+        "fault" : {
+          "$ref" : "#/definitions/fault"
+        }
+      },
+      "description" : "The response payload on a failure"
+    },
+    "fault" : {
+      "type" : "object",
+      "required" : [ "errorLevel", "httpErrorCode", "message", "payloadErrorCode", "retryable" ],
+      "properties" : {
+        "errorLevel" : {
+          "type" : "string",
+          "description" : "Error level of the response.  Values include:\nVALIDATION, ERROR, WARNING, INFORMATIONAL.\nIf there are multiple errors returned, this will be the most severe error level."
+        },
+        "httpErrorCode" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "HTTP Error Code as defined in the Operation."
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Text of the error"
+        },
+        "payloadErrorCode" : {
+          "type" : "string",
+          "description" : "High level error code of the API.  This is a unique code defined by the API."
+        },
+        "retryable" : {
+          "type" : "boolean",
+          "description" : "Defines if the type of error is transient and the request could be retried."
+        },
+        "errorDetails" : {
+          "type" : "array",
+          "description" : "List of general errors",
+          "items" : {
+            "$ref" : "#/definitions/errorDetail"
+          }
+        },
+        "validationErrorDetails" : {
+          "type" : "array",
+          "description" : "List of validation errors",
+          "items" : {
+            "$ref" : "#/definitions/validationErrorDetail"
+          }
+        }
+      },
+      "description" : "A single fault structure"
+    },
+    "errorDetail" : {
+      "type" : "object",
+      "required" : [ "errorLevel", "message" ],
+      "properties" : {
+        "errorCode" : {
+          "type" : "string",
+          "description" : "**for internal use** error code from the backend system(s)"
+        },
+        "errorLevel" : {
+          "type" : "string",
+          "description" : "**for internal use** error level.  Values include:\nERROR, WARNING, INFORMATIONAL"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "**for internal use**  the error text from the backend system(s)"
+        }
+      },
+      "description" : "A single error detail structure"
+    },
+    "validationErrorDetail" : {
+      "type" : "object",
+      "required" : [ "field", "message", "name", "value" ],
+      "properties" : {
+        "field" : {
+          "type" : "string",
+          "description" : "field that failed validation"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "description of the failed validation"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "name of the api that has the validation error"
+        },
+        "value" : {
+          "type" : "string",
+          "description" : "value that failed the validation"
+        }
+      },
+      "description" : "A single validation error detail"
+    },
+    "address" : {
+      "type" : "object",
+      "required" : [ "addressType" ],
+      "properties" : {
+        "addressType" : {
+          "type" : "array",
+          "description" : "List of addressType(s) to search. Values are as follows:\n\n* Home Address\n* Alternate Address\n* Billing Address\n* Temporary Address\n* Primary Address future use\n* Permanent Address future use\n* Contact Address future use\n* Mailing Address future use\n* ID Card Mailing Address future use\n* Correspondance and Mailing Address future use\n* Correspondance and Billing future use\n* Personal Representative Address future use",
+          "items" : {
+            "$ref" : "#/definitions/addressType"
+          },
+          "minItems" : 1
+        },
+        "street" : {
+          "type" : "string",
+          "description" : "1st thru 3rd  lines of the member's address",
+          "example" : "street=123 Main street APT 1A"
+        },
+        "city" : {
+          "type" : "string",
+          "description" : "City",
+          "example" : "city=Newark"
+        },
+        "state" : {
+          "type" : "string",
+          "description" : "State",
+          "minLength" : 2,
+          "maxLength" : 2,
+          "example" : "state=NJ"
+        },
+        "zipCode" : {
+          "type" : "string",
+          "description" : "5 digit zip code of member's address",
+          "minLength" : 5,
+          "maxLength" : 5,
+          "example" : "zipCode=07101"
+        }
+      },
+      "description" : "addressType is required together with a minimum of street or city or state or zipCode"
+    },
+    "addressType" : {
+      "type" : "object",
+      "properties" : {
+        "addressType" : {
+          "type" : "string",
+          "description" : "List of values are\n\n* Home Address\n* Alternate Address\n* Billing Address\n* Temporary Address\n* Primary Address future use\n* Permanent Address future use\n* Contact Address future use\n* Mailing Address future use\n* ID Card Mailing Address future use\n* Correspondance and Mailing Address future use\n* Correspondance and Billing future use\n* Personal Representative Address future use"
+        }
+      }
+    },
+    "pagination" : {
+      "type" : "object",
+      "properties" : {
+        "pageNumber" : {
+          "type" : "integer",
+          "description" : "Page number being returned"
+        },
+        "pageLimit" : {
+          "type" : "integer",
+          "description" : "Total number of allowed records per pager"
+        },
+        "total" : {
+          "type" : "integer",
+          "description" : "Total number of underlying records (not just the ones returned for the current page)"
+        }
+      }
+    },
+    "plan" : {
+      "type" : "object",
+      "properties" : {
+        "homePlanCode" : {
+          "type" : "string",
+          "description" : "3 digit Plan Code of participating other BCBSA Home Plan where the member is enrolled"
+        },
+        "homePlanName" : {
+          "type" : "string",
+          "description" : "The plan name of participating  other BCBSA home plan where the member is enrolled"
+        }
+      },
+      "description" : "a single plan record for the member search.\n"
+    }
+  }
+}
