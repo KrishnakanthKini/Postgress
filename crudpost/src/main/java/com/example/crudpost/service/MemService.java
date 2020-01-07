@@ -12,6 +12,6 @@ public interface MemService {
 
     public void updateMember(Member member);
 
-    public void deleteMember(UUID uuid);
+    public void deleteMember(String uuid);
 
 }

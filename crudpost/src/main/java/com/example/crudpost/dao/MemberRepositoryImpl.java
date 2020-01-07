@@ -34,9 +34,9 @@ public class MemberRepositoryImpl implements  MemberRepository {
     }
 
     @Override
-    public void deleteMember(UUID uuid) {
+    public void deleteMember(String uuid) {
 
-        String query = "DELETE FROM member WHERE uuid=?";
+        String query = "DELETE FROM member WHERE uuid =?";
         jdbcTemplate.update(query, uuid);
     }
 

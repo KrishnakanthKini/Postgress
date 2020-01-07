@@ -24,7 +24,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/deletes/{uuid}")
-    public void deleteMember(@PathVariable UUID uuid) {
+    public void deleteMember(@PathVariable String uuid) {
         memberService.deleteMember(uuid);
     }
     @PostMapping("/updates")

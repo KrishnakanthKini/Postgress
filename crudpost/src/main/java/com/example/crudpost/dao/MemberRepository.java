@@ -15,5 +15,5 @@ public interface MemberRepository {
 
  public void updateMember(Member member);
 
- public void deleteMember(UUID uuid);
+ public void deleteMember(String uuid);
 }

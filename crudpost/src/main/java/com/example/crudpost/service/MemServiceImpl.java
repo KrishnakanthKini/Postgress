@@ -30,7 +30,7 @@ public class MemServiceImpl implements MemService {
     }
 
     @Override
-    public void deleteMember(UUID uuid) {
+    public void deleteMember(String uuid) {
         memberRepository.deleteMember(uuid);
     }
 }
